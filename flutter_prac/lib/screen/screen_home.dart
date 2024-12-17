@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_prac/model/model_quiz.dart';
 import 'package:flutter_prac/screen/screen_quiz.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,21 +13,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Quiz> quizs = [
-    Quiz.fromMap({
-      'title': 'test',
-      'candidates': ['a', 'b', 'c', 'd'],
-      'answer': 0
-    }),
-    Quiz.fromMap({
-      'title': 'test',
-      'candidates': ['a', 'b', 'c', 'd'],
-      'answer': 0
-    }),
-    Quiz.fromMap({
-      'title': 'test',
-      'candidates': ['a', 'b', 'c', 'd'],
-      'answer': 0
-    }),
+    // Quiz.fromMap({
+    //   'title': 'test',
+    //   'candidates': ['a', 'b', 'c', 'd'],
+    //   'answer': 0
+    // }),
+    // Quiz.fromMap({
+    //   'title': 'test',
+    //   'candidates': ['a', 'b', 'c', 'd'],
+    //   'answer': 0
+    // }),
+    // Quiz.fromMap({
+    //   'title': 'test',
+    //   'candidates': ['a', 'b', 'c', 'd'],
+    //   'answer': 0
+    // }),
   ];
 
   @override
@@ -76,23 +77,39 @@ class _HomeScreenState extends State<HomeScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               child: ElevatedButton(
-                                child: Text('지금 퀴즈 풀기',
-                                    style: TextStyle(color: Colors.white)),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.deepPurple,
-                                    foregroundColor: Colors.white),
-                                onPressed: () async {
-                                  final response = await http.get(Uri.parse(
-                                      "http://127.0.0.1:8000/quiz/3/"));
-                                  print(response.body);
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => QuizScreen(
-                                  //               quizs: quizs,
-                                  //             )));
-                                },
-                              ),
+                                  child: Text('지금 퀴즈 풀기',
+                                      style: TextStyle(color: Colors.white)),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.deepPurple,
+                                      foregroundColor: Colors.white),
+                                  onPressed: () async {
+                                    final response = await http.get(Uri.parse(
+                                        "http://127.0.0.1:8000/quiz/3/"));
+                                    if (response.statusCode == 200) {
+                                      var parsed = json.decode(response.body);
+                                      quizs = parsed
+                                          .map<Quiz>(
+                                              (json) => Quiz.fromJson(json))
+                                          .toList();
+
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => QuizScreen(
+                                                    quizs: quizs,
+                                                  )));
+                                    }
+                                    // List<dynamic> jsonData =
+                                    //     json.decode(response.body);
+                                    // for (var item in jsonData) {
+                                    //   String title = item['title'];
+                                    //   String body = item['body'];
+                                    //   int answer = item['answer'];
+
+                                    //   print(
+                                    //       '제목: $title, 내용: $body, 답변: $answer');
+                                    // }
+                                  }),
                             ),
                           ))
                     ]))));
