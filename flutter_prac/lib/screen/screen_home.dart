@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_prac/model/model_quiz.dart';
 import 'package:flutter_prac/screen/screen_quiz.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,13 +81,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.deepPurple,
                                     foregroundColor: Colors.white),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => QuizScreen(
-                                                quizs: quizs,
-                                              )));
+                                onPressed: () async {
+                                  final response = await http.get(Uri.parse(
+                                      "http://127.0.0.1:8000/quiz/3/"));
+                                  print(response.body);
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => QuizScreen(
+                                  //               quizs: quizs,
+                                  //             )));
                                 },
                               ),
                             ),
